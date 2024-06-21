@@ -1,4 +1,6 @@
 const express = require("express");
+const bodyParser = require('body-parser');
+var cors = require('cors');
 const database = require("./config/database");
 require("dotenv").config();
 const app = express();
@@ -6,29 +8,15 @@ const port = process.env.PORT;
 
 database.connect();
 
-const Task = require("./models/task.model");
+const routesApiVer1 = require("./api/v1/routes/index.route");
 
-app.get("/tasks" , async (req, res) => {
-    const tasks = await Task.find({
-        deleted: false
-    });
+// cors
+app.use(cors());
 
-    res.json(tasks);
-});
+// parse application/json
+app.use(bodyParser.json())
 
-app.get("/tasks/detail/:id" , async (req, res) => {
-    try {
-        const id = req.params.id;
-        const tasks = await Task.findOne({
-            deleted: false,
-            _id: id
-        });
-        res.json(tasks);
-    } catch (error) {
-        res.redirect("/tasks");
-    }
-    
-})
+routesApiVer1(app);
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`)
