@@ -6,10 +6,7 @@ const userSchema = new mongoose.Schema(
         fullName: String,
         email: String,
         password: String,
-        tokenUser: {
-            type: String,
-            default: generate.generateRamdomString(20),
-        },
+        tokenUser: String,
         deleted: {
             type: Boolean,
             default: false,

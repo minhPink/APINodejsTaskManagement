@@ -22,7 +22,8 @@ module.exports.register = async (req, res) => {
         const user = new User({
             fullName: req.body.fullName,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            tokenUser: generateHelper.generateRamdomString(20),
         });
         user.save();
 
@@ -177,15 +178,10 @@ module.exports.resetPassword = async (req, res) => {
 // [GET] /users/detail
 module.exports.detail = async (req, res) => {
     try {
-        const token = req.cookies.token;
-        const user = await User.findOne({
-            tokenUser: token,
-            deleted: false
-        }).select("-password -token")
         res.json({
             code: 200,
             message: "Lay ra thong tin thanh cong !",
-            info: user
+            info: req.user
         })
     } catch (error) {
         res.json({
@@ -193,4 +189,18 @@ module.exports.detail = async (req, res) => {
             message: "Khong thanh cong !"
         })
     }
+}
+
+
+//[GET] /users/list
+module.exports.list = async (req, res) => {
+    const users = await User.find({
+        deleted: fasle
+    }).select("fullName email");
+
+    res.json({
+        code: 200,
+        message: "Lay thong tin tat ca moi nguoi",
+        users: users
+    })
 }

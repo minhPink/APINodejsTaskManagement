@@ -1,9 +1,14 @@
 const Task = require("../models/task.model");
 const paginationHepers = require("../../../helpers/pagination");
 const searchHelper = require("../../../helpers/search");
+const User = require("../models/users.model");
 // [GET] /tasks/
 module.exports.index = async (req, res) => {
     const find = {
+        $or: [
+            { createdBy: req.user.id },
+            { listUser: req.user.id }
+        ],
         deleted: false
     };
     // Bo loc trang thai
@@ -123,6 +128,7 @@ module.exports.changeMulti= async (req, res) => {
 // [POST] /tasks/create
 module.exports.createPost = async (req, res) => {
     try {
+        req.body.createdBy = req.user.id;
         const taskCreate = new Task(req.body);
         const data = await taskCreate.save();
 
